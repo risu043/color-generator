@@ -113,8 +113,8 @@ const GradientGenerator = () => {
   };
 
   return (
-    <div className="grid items-center justify-center w-full h-screen bg-neutral-100">
-      <Card className="w-full max-w-2xl">
+    <div className="container mx-auto max-w-2xl my-8">
+      <Card>
         <CardHeader>
           <CardTitle className="font-Deco text-2xl text-center">
             グラデーション市松ジェネレーター
