@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CanvasType, BlendMode } from './type';
+import { BlendMode } from './type';
 import {
   HSVtoRGB,
   RGBtoHex,
@@ -20,7 +20,6 @@ const GradientGenerator = () => {
   const [startColor, setStartColor] = useState<string>('#efff00');
   const [endColor, setEndColor] = useState<string>('#ff6400');
   const [angle, setAngle] = useState<number>(180);
-  const [activeCanvas, setActiveCanvas] = useState<CanvasType>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [blendMode, setBlendMode] = useState<BlendMode>('screen');
 
@@ -57,9 +56,9 @@ const GradientGenerator = () => {
         const { r, g, b } = HSVtoRGB(hue, saturation, 1);
         const color = RGBtoHex(r, g, b);
 
-        if (activeCanvas === 'start') {
+        if (canvas === startColorWheelRef.current) {
           setStartColor(color);
-        } else if (activeCanvas === 'end') {
+        } else if (canvas === endColorWheelRef.current) {
           setEndColor(color);
         }
       }
@@ -68,24 +67,20 @@ const GradientGenerator = () => {
       canvas === startBrightnessRef.current ||
       canvas === endBrightnessRef.current
     ) {
-      const currentColor = activeCanvas === 'start' ? startColor : endColor;
+      const currentColor =
+        canvas === startBrightnessRef.current ? startColor : endColor;
       const { h, s } = parseHexToHSV(currentColor); // 現在の色の色相と彩度を取得
       const v = Math.min(Math.max(x / canvas.width, 0), 1); // 明度（v）の計算
 
       const { r, g, b } = HSVtoRGB(h, s, v); // 色相と彩度を維持し、明度のみ変更
       const color = RGBtoHex(r, g, b);
 
-      if (activeCanvas === 'start') {
+      if (canvas === startBrightnessRef.current) {
         setStartColor(color);
-      } else if (activeCanvas === 'end') {
+      } else if (canvas === endBrightnessRef.current) {
         setEndColor(color);
       }
     }
-  };
-
-  const leave = () => {
-    setIsDragging(false);
-    setActiveCanvas(null);
   };
 
   useEffect(() => {
@@ -145,7 +140,6 @@ const GradientGenerator = () => {
                 className="cursor-pointer"
                 onMouseDown={(e) => {
                   setIsDragging(true);
-                  setActiveCanvas('start');
                   if (startColorWheelRef.current) {
                     handleCanvasInteraction(e, startColorWheelRef.current);
                   }
@@ -155,8 +149,8 @@ const GradientGenerator = () => {
                     handleCanvasInteraction(e, startColorWheelRef.current);
                   }
                 }}
-                onMouseUp={() => leave()}
-                onMouseLeave={() => leave()}
+                onMouseUp={() => setIsDragging(false)}
+                onMouseLeave={() => setIsDragging(false)}
               />
               {/* 彩度 */}
               <canvas
@@ -166,7 +160,6 @@ const GradientGenerator = () => {
                 className="cursor-pointer"
                 onMouseDown={(e) => {
                   setIsDragging(true);
-                  setActiveCanvas('start');
                   if (startBrightnessRef.current) {
                     handleCanvasInteraction(e, startBrightnessRef.current);
                   }
@@ -176,8 +169,8 @@ const GradientGenerator = () => {
                     handleCanvasInteraction(e, startBrightnessRef.current);
                   }
                 }}
-                onMouseUp={() => leave()}
-                onMouseLeave={() => leave()}
+                onMouseUp={() => setIsDragging(false)}
+                onMouseLeave={() => setIsDragging(false)}
               />
             </div>
             <div className="space-y-2">
@@ -189,7 +182,6 @@ const GradientGenerator = () => {
                 className="cursor-pointer"
                 onMouseDown={(e) => {
                   setIsDragging(true);
-                  setActiveCanvas('end');
                   if (endColorWheelRef.current) {
                     handleCanvasInteraction(e, endColorWheelRef.current);
                   }
@@ -199,8 +191,8 @@ const GradientGenerator = () => {
                     handleCanvasInteraction(e, endColorWheelRef.current);
                   }
                 }}
-                onMouseUp={() => leave()}
-                onMouseLeave={() => leave()}
+                onMouseUp={() => setIsDragging(false)}
+                onMouseLeave={() => setIsDragging(false)}
               />
               {/* 彩度 */}
               <canvas
@@ -210,7 +202,6 @@ const GradientGenerator = () => {
                 className="cursor-pointer"
                 onMouseDown={(e) => {
                   setIsDragging(true);
-                  setActiveCanvas('end');
                   if (endBrightnessRef.current) {
                     handleCanvasInteraction(e, endBrightnessRef.current);
                   }
@@ -220,8 +211,8 @@ const GradientGenerator = () => {
                     handleCanvasInteraction(e, endBrightnessRef.current);
                   }
                 }}
-                onMouseUp={() => leave()}
-                onMouseLeave={() => leave()}
+                onMouseUp={() => setIsDragging(false)}
+                onMouseLeave={() => setIsDragging(false)}
               />
             </div>
           </div>
