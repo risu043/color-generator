@@ -5,3 +5,5 @@ export type RGB = {
 };
 
 export type CanvasType = 'start' | 'end' | null;
+
+export type BlendMode = 'screen' | 'overlay' | 'color-burn' | 'hard-light';
