@@ -116,7 +116,7 @@ const GradientGenerator = () => {
     <div className="container mx-auto max-w-2xl my-8">
       <Card>
         <CardHeader>
-          <CardTitle className="font-Deco text-2xl text-center">
+          <CardTitle className="font-Deco text-xl md:text-2xl text-center">
             グラデーション市松ジェネレーター
           </CardTitle>
         </CardHeader>
@@ -130,14 +130,14 @@ const GradientGenerator = () => {
             }}
           />
           {/* カラーピッカー */}
-          <div className="flex gap-8 justify-center">
-            <div className="space-y-2">
+          <div className="md:flex gap-8 justify-center">
+            <div className="space-y-2 border rounded-xl p-4 mb-4">
               <div className="text-center">開始色: {startColor}</div>
               <canvas
                 ref={startColorWheelRef}
                 width={200}
                 height={200}
-                className="cursor-pointer"
+                className="cursor-pointer mx-auto"
                 onMouseDown={(e) => {
                   setIsDragging(true);
                   if (startColorWheelRef.current) {
@@ -157,7 +157,7 @@ const GradientGenerator = () => {
                 ref={startBrightnessRef}
                 width={200}
                 height={30}
-                className="cursor-pointer"
+                className="cursor-pointer mx-auto"
                 onMouseDown={(e) => {
                   setIsDragging(true);
                   if (startBrightnessRef.current) {
@@ -173,13 +173,13 @@ const GradientGenerator = () => {
                 onMouseLeave={() => setIsDragging(false)}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 border rounded-xl p-4 mb-4">
               <div className="text-center">終了色: {endColor}</div>
               <canvas
                 ref={endColorWheelRef}
                 width={200}
                 height={200}
-                className="cursor-pointer"
+                className="cursor-pointer mx-auto"
                 onMouseDown={(e) => {
                   setIsDragging(true);
                   if (endColorWheelRef.current) {
@@ -199,7 +199,7 @@ const GradientGenerator = () => {
                 ref={endBrightnessRef}
                 width={200}
                 height={30}
-                className="cursor-pointer"
+                className="cursor-pointer mx-auto"
                 onMouseDown={(e) => {
                   setIsDragging(true);
                   if (endBrightnessRef.current) {
@@ -229,7 +229,8 @@ const GradientGenerator = () => {
             />
             <span className="min-w-12">{angle}°</span>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
+            <label className="min-w-24">レイヤー効果:</label>
             <Select
               onValueChange={(value: BlendMode) => setBlendMode(value)}
               defaultValue="screen"
