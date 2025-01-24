@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { BlendMode } from './type';
+import { BlendMode } from '@/type';
 import {
   HSVtoRGB,
   RGBtoHex,
@@ -15,6 +15,7 @@ import {
   drawColorWheel,
   drawBrightnessSlider,
 } from './lib/utils';
+// import { ColorWheel } from '@/components/colorwheel';
 
 const GradientGenerator = () => {
   const [startColor, setStartColor] = useState<string>('#efff00');
@@ -133,6 +134,12 @@ const GradientGenerator = () => {
           <div className="md:flex gap-8 justify-center">
             <div className="space-y-2 border rounded-xl p-4 mb-4">
               <div className="text-center">開始色: {startColor}</div>
+              {/* <ColorWheel
+                setColor={setStartColor}
+                isDragging={isDragging}
+                setIsDragging={setIsDragging}
+                ref={startColorWheelRef}
+              /> */}
               <canvas
                 ref={startColorWheelRef}
                 width={200}
