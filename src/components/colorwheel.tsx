@@ -5,7 +5,7 @@ interface ColorCanvasProps {
   setColor: (color: string) => void;
   isDragging: boolean;
   setIsDragging: (dragging: boolean) => void;
-  ref: React.RefObject<HTMLCanvasElement>;
+  ref: React.RefObject<HTMLCanvasElement | null>;
 }
 
 export const ColorWheel: React.FC<ColorCanvasProps> = ({
@@ -14,18 +14,16 @@ export const ColorWheel: React.FC<ColorCanvasProps> = ({
   setIsDragging,
   ref,
 }) => {
-  //   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
   useEffect(() => {
-    if (ref.current) {
+    if (ref && ref.current) {
       drawColorWheel(ref.current);
     }
-  }, []);
+  }, [ref]);
 
   const handleCanvasInteraction = (
     e: React.MouseEvent<HTMLCanvasElement>
   ): void => {
-    if (!ref.current) return;
+    if (!ref || !ref.current) return;
 
     if (!isDragging && e.type === 'mousemove') return;
 

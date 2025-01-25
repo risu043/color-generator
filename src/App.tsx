@@ -15,7 +15,7 @@ import {
   drawColorWheel,
   drawBrightnessSlider,
 } from './lib/utils';
-// import { ColorWheel } from '@/components/colorwheel';
+import { ColorWheel } from '@/components/colorwheel';
 
 const GradientGenerator = () => {
   const [startColor, setStartColor] = useState<string>('#efff00');
@@ -24,7 +24,7 @@ const GradientGenerator = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [blendMode, setBlendMode] = useState<BlendMode>('screen');
 
-  const startColorWheelRef = useRef<HTMLCanvasElement | null>(null);
+  const startColorWheelRef = useRef<HTMLCanvasElement>(null);
   const endColorWheelRef = useRef<HTMLCanvasElement | null>(null);
   const startBrightnessRef = useRef<HTMLCanvasElement | null>(null);
   const endBrightnessRef = useRef<HTMLCanvasElement | null>(null);
@@ -134,13 +134,13 @@ const GradientGenerator = () => {
           <div className="md:flex gap-8 justify-center">
             <div className="space-y-2 border rounded-xl p-4 mb-4">
               <div className="text-center">開始色: {startColor}</div>
-              {/* <ColorWheel
+              <ColorWheel
                 setColor={setStartColor}
                 isDragging={isDragging}
                 setIsDragging={setIsDragging}
                 ref={startColorWheelRef}
-              /> */}
-              <canvas
+              />
+              {/* <canvas
                 ref={startColorWheelRef}
                 width={200}
                 height={200}
@@ -158,7 +158,7 @@ const GradientGenerator = () => {
                 }}
                 onMouseUp={() => setIsDragging(false)}
                 onMouseLeave={() => setIsDragging(false)}
-              />
+              /> */}
               {/* 彩度 */}
               <canvas
                 ref={startBrightnessRef}
