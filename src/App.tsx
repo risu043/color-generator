@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -8,13 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { BlendMode } from '@/type';
-import {
-  HSVtoRGB,
-  RGBtoHex,
-  parseHexToHSV,
-  drawColorWheel,
-  drawBrightnessSlider,
-} from './lib/utils';
+import { Brightness } from '@/components/brightness';
 import { ColorWheel } from '@/components/colorwheel';
 
 const GradientGenerator = () => {
@@ -24,82 +18,10 @@ const GradientGenerator = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [blendMode, setBlendMode] = useState<BlendMode>('screen');
 
-  const startColorWheelRef = useRef<HTMLCanvasElement>(null);
+  const startColorWheelRef = useRef<HTMLCanvasElement | null>(null);
   const endColorWheelRef = useRef<HTMLCanvasElement | null>(null);
   const startBrightnessRef = useRef<HTMLCanvasElement | null>(null);
   const endBrightnessRef = useRef<HTMLCanvasElement | null>(null);
-
-  // Handle canvas click/drag
-  const handleCanvasInteraction = (
-    e: React.MouseEvent<HTMLCanvasElement>,
-    canvas: HTMLCanvasElement
-  ): void => {
-    if (!isDragging && e.type === 'mousemove') return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    if (
-      canvas === startColorWheelRef.current ||
-      canvas === endColorWheelRef.current
-    ) {
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const dx = x - centerX;
-      const dy = y - centerY;
-      const radius = Math.min(canvas.width, canvas.height) / 2 - 5;
-
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance <= radius) {
-        const hue = (Math.atan2(dy, dx) + Math.PI) / (Math.PI * 2);
-        const saturation = Math.min(distance / radius, 1);
-        const { r, g, b } = HSVtoRGB(hue, saturation, 1);
-        const color = RGBtoHex(r, g, b);
-
-        if (canvas === startColorWheelRef.current) {
-          setStartColor(color);
-        } else if (canvas === endColorWheelRef.current) {
-          setEndColor(color);
-        }
-      }
-    }
-    if (
-      canvas === startBrightnessRef.current ||
-      canvas === endBrightnessRef.current
-    ) {
-      const currentColor =
-        canvas === startBrightnessRef.current ? startColor : endColor;
-      const { h, s } = parseHexToHSV(currentColor); // 現在の色の色相と彩度を取得
-      const v = Math.min(Math.max(x / canvas.width, 0), 1); // 明度（v）の計算
-
-      const { r, g, b } = HSVtoRGB(h, s, v); // 色相と彩度を維持し、明度のみ変更
-      const color = RGBtoHex(r, g, b);
-
-      if (canvas === startBrightnessRef.current) {
-        setStartColor(color);
-      } else if (canvas === endBrightnessRef.current) {
-        setEndColor(color);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (startColorWheelRef.current) {
-      drawColorWheel(startColorWheelRef.current);
-    }
-    if (endColorWheelRef.current) {
-      drawColorWheel(endColorWheelRef.current);
-    }
-  }, []);
-  useEffect(() => {
-    if (startBrightnessRef.current) {
-      drawBrightnessSlider(startBrightnessRef.current);
-    }
-    if (endBrightnessRef.current) {
-      drawBrightnessSlider(endBrightnessRef.current);
-    }
-  }, []);
 
   const gradientString = `conic-gradient(
           #e1e1e1 0.25turn,
@@ -140,86 +62,28 @@ const GradientGenerator = () => {
                 setIsDragging={setIsDragging}
                 ref={startColorWheelRef}
               />
-              {/* <canvas
-                ref={startColorWheelRef}
-                width={200}
-                height={200}
-                className="cursor-pointer mx-auto"
-                onMouseDown={(e) => {
-                  setIsDragging(true);
-                  if (startColorWheelRef.current) {
-                    handleCanvasInteraction(e, startColorWheelRef.current);
-                  }
-                }}
-                onMouseMove={(e) => {
-                  if (startColorWheelRef.current) {
-                    handleCanvasInteraction(e, startColorWheelRef.current);
-                  }
-                }}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
-              /> */}
-              {/* 彩度 */}
-              <canvas
+              <Brightness
+                currentColor={startColor}
+                setColor={setStartColor}
+                isDragging={isDragging}
+                setIsDragging={setIsDragging}
                 ref={startBrightnessRef}
-                width={200}
-                height={30}
-                className="cursor-pointer mx-auto"
-                onMouseDown={(e) => {
-                  setIsDragging(true);
-                  if (startBrightnessRef.current) {
-                    handleCanvasInteraction(e, startBrightnessRef.current);
-                  }
-                }}
-                onMouseMove={(e) => {
-                  if (startBrightnessRef.current) {
-                    handleCanvasInteraction(e, startBrightnessRef.current);
-                  }
-                }}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
               />
             </div>
             <div className="space-y-2 border rounded-xl p-4 mb-4">
               <div className="text-center">終了色: {endColor}</div>
-              <canvas
+              <ColorWheel
+                setColor={setEndColor}
+                isDragging={isDragging}
+                setIsDragging={setIsDragging}
                 ref={endColorWheelRef}
-                width={200}
-                height={200}
-                className="cursor-pointer mx-auto"
-                onMouseDown={(e) => {
-                  setIsDragging(true);
-                  if (endColorWheelRef.current) {
-                    handleCanvasInteraction(e, endColorWheelRef.current);
-                  }
-                }}
-                onMouseMove={(e) => {
-                  if (endColorWheelRef.current) {
-                    handleCanvasInteraction(e, endColorWheelRef.current);
-                  }
-                }}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
               />
-              {/* 彩度 */}
-              <canvas
+              <Brightness
+                currentColor={endColor}
+                setColor={setEndColor}
+                isDragging={isDragging}
+                setIsDragging={setIsDragging}
                 ref={endBrightnessRef}
-                width={200}
-                height={30}
-                className="cursor-pointer mx-auto"
-                onMouseDown={(e) => {
-                  setIsDragging(true);
-                  if (endBrightnessRef.current) {
-                    handleCanvasInteraction(e, endBrightnessRef.current);
-                  }
-                }}
-                onMouseMove={(e) => {
-                  if (endBrightnessRef.current) {
-                    handleCanvasInteraction(e, endBrightnessRef.current);
-                  }
-                }}
-                onMouseUp={() => setIsDragging(false)}
-                onMouseLeave={() => setIsDragging(false)}
               />
             </div>
           </div>
